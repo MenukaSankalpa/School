@@ -11,7 +11,7 @@ if(!isset($_SESSION['user_id'])){
 <head>
   <meta charset="UTF-8">
   <title>Information Fill Section</title>
-  <link rel="stylesheet" href="css\style.css">
+  <link rel="stylesheet" href="..\css\style.css">
 </head>
 <body>
   <form action="save_information.php" method="POST" enctype="multipart/form-data">
