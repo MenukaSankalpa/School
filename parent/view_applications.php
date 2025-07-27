@@ -83,7 +83,7 @@ $result = $stmt->get_result();
                         ?>
                     </td>
                     <td>
-                        <a class="view-btn" href="view_photos.php?id=<?= $row['id'] ?>" target="_blank">View Photos</a>
+                        <a class="view-btn" href="../parent/view_photos.php?id=<?= $row['id'] ?>" target="_blank">View Photos</a>
                     </td>
                     <td>
                         <a class="edit-btn" href="edit_application.php?id=<?= $row['id'] ?>">Edit</a>
