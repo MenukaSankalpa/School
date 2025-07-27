@@ -82,12 +82,12 @@ if(!isset($_SESSION['user_id'])){
       <input type="text" name="spouse_district" placeholder="Resident District" >
     </div>
 
-    <h2>Evidence Information</h2>>
+    <h2>Evidence Information</h2>
     <label>Electrical Bills: </label>
     <input type="file" name="ebill[]" multiple><br><br>
     
     <h2>Living Information</h2>
-    <label>Electrical Bill: </label>
+    <label>Living Files: </label>
     <input type="file" name="lbill[]" multiple><br><br>
 
     <button type="submit">Submit</button>
