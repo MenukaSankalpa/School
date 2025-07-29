@@ -8,7 +8,9 @@ project/
 │
 ├── uploads/
 │   └── (uploaded documents)
-│
+│   ├── Lbills
+│   ├── ebills
+
 ├── includes/
 │   ├── db.php
 │   ├── header.php             # common page header (optional)
