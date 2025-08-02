@@ -2,7 +2,6 @@
 session_start();
 include '../db.php'; 
 
-
 if (!isset($_SESSION['user_id'])) {
     echo "Unauthorized access.";
     exit;
@@ -10,22 +9,19 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $complaint = trim($_POST['complaint'] ?? '');
 
     if (empty($complaint)) {
         $error = "Please enter your complaint or question.";
     } else {
-       
         $sql = "INSERT INTO complaints (user_id, complaint_text, created_at) VALUES (?, ?, NOW())";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("is", $user_id, $complaint);
 
         if ($stmt->execute()) {
             $success = "Your complaint has been submitted successfully.";
-            
-            $_POST['complaint'] = '';
+            $_POST['complaint'] = ''; // clear field
         } else {
             $error = "Failed to submit complaint. Please try again.";
         }
@@ -36,118 +32,129 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Submit Complaint</title>
-<style>
-    
-    * {
-        box-sizing: border-box;
-    }
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: #f9fafb;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        min-height: 100vh;
-        color: #333;
-    }
-    .container {
-        background: white;
-        margin: 40px 20px;
-        padding: 30px 40px;
-        max-width: 600px;
-        width: 100%;
-        border-radius: 12px;
-        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-    }
-    h1 {
-        margin-bottom: 20px;
-        font-weight: 700;
-        font-size: 1.8rem;
-        color: #2c3e50;
-        text-align: center;
-    }
-    label {
-        display: block;
-        font-weight: 600;
-        margin-bottom: 8px;
-        font-size: 1rem;
-        color: #34495e;
-    }
-    textarea {
-        width: 100%;
-        min-height: 140px;
-        padding: 14px 18px;
-        border: 2px solid #ddd;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-family: inherit;
-        resize: vertical;
-        transition: border-color 0.3s ease;
-    }
-    textarea:focus {
-        border-color: #3498db;
-        outline: none;
-    }
-    button {
-        background-color: #3498db;
-        border: none;
-        color: white;
-        padding: 14px 28px;
-        font-size: 1rem;
-        border-radius: 8px;
-        cursor: pointer;
-        margin-top: 20px;
-        width: 100%;
-        font-weight: 600;
-        transition: background-color 0.3s ease;
-    }
-    button:hover {
-        background-color: #2980b9;
-    }
-    .error, .success {
-        margin-bottom: 20px;
-        padding: 12px 16px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.95rem;
-        text-align: center;
-    }
-    .error {
-        background-color: #ffe6e6;
-        color: #d93025;
-        border: 1px solid #d93025;
-    }
-    .success {
-        background-color: #e6f4ea;
-        color: #188038;
-        border: 1px solid #188038;
-    }
-    a {
-        display: inline-block;
-        margin-top: 25px;
-        color: #3498db;
-        text-decoration: none;
-        font-weight: 600;
-        transition: color 0.3s ease;
-    }
-    a:hover {
-        color: #2980b9;
-        text-decoration: underline;
-    }
-    @media (max-width: 480px) {
+    <meta charset="UTF-8" />
+    <title>Submit Complaint</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f9fafb;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            color: #333;
+        }
         .container {
-            padding: 20px 20px;
-            margin: 20px 10px;
+            background: white;
+            margin: 40px 20px;
+            padding: 30px 40px;
+            max-width: 700px;
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
         }
         h1 {
-            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: #2c3e50;
+            text-align: center;
         }
-    }
-</style>
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1rem;
+            color: #34495e;
+        }
+        textarea {
+            width: 100%;
+            min-height: 140px;
+            padding: 14px 18px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+        textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        button {
+            background-color: #3498db;
+            border: none;
+            color: white;
+            padding: 14px 28px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .error, .success {
+            margin-bottom: 20px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+        .error {
+            background-color: #ffe6e6;
+            color: #d93025;
+            border: 1px solid #d93025;
+        }
+        .success {
+            background-color: #e6f4ea;
+            color: #188038;
+            border: 1px solid #188038;
+        }
+        a {
+            display: inline-block;
+            margin-top: 25px;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+        .complaint-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .admin-reply {
+            background: #e0f7e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            color: #065f46;
+        }
+        hr {
+            margin: 40px 0;
+            border: none;
+            border-top: 1px solid #ddd;
+        }
+        @media (max-width: 480px) {
+            .container { padding: 20px; }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
 </head>
 <body>
 
@@ -164,11 +171,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <form method="post" action="submit_complaint.php" novalidate>
         <label for="complaint">Your Complaint or Question:</label>
-        <textarea name="complaint" id="complaint" rows="6" required><?= htmlspecialchars($_POST['complaint'] ?? '') ?></textarea>
+        <textarea name="complaint" id="complaint" required><?= htmlspecialchars($_POST['complaint'] ?? '') ?></textarea>
         <button type="submit">Submit</button>
     </form>
 
     <a href="../parent/parent_dash.php">Back to Dashboard</a>
+
+    <hr>
+
+    <h2 style="font-size: 1.4rem; color: #2c3e50; margin-bottom: 20px;">Your Past Complaints</h2>
+
+    <?php
+    $sql_history = "SELECT complaint_text, reply_text, created_at 
+                    FROM complaints 
+                    WHERE user_id = ? 
+                    ORDER BY created_at DESC";
+    $stmt = $conn->prepare($sql_history);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result && $result->num_rows > 0): ?>
+        <?php while ($row = $result->fetch_assoc()): ?>
+            <div class="complaint-item">
+                <p><strong>You said:</strong> <?= nl2br(htmlspecialchars($row['complaint_text'])) ?></p>
+                <p style="font-size: 0.9rem; color: #6b7280;">Submitted on: <?= date("d M Y, H:i", strtotime($row['created_at'])) ?></p>
+
+                <?php if (!empty($row['reply_text'])): ?>
+                    <div class="admin-reply">
+                        <strong>Admin Reply:</strong>
+                        <p style="margin-top: 5px;"><?= nl2br(htmlspecialchars($row['reply_text'])) ?></p>
+                    </div>
+                <?php else: ?>
+                    <p style="color: #999; font-style: italic;">No reply yet.</p>
+                <?php endif; ?>
+            </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <p style="color: #999;">You haven't submitted any complaints yet.</p>
+    <?php endif; ?>
 </div>
 
 </body>
