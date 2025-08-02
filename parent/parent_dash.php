@@ -91,7 +91,7 @@ $_SESSION['child_name'] = $user['child_name'];
     <div id="schoolResults" style="display: none;"></div>
 
 <script>
-    const schoolArray = [
+    /*const schoolArray = [
         { name: "Kalutara Boys' School", type: "boy", address: "Galle Road, Kalutara", lat: 6.5836, lon: 79.9602 },
         { name: "Kalutara Balika Vidyalaya", type: "girl", address: "Main Street, Kalutara", lat: 6.5823, lon: 79.9609 },
         { name: "Holy Cross College", type: "mixed", address: "Nagoda Road, Kalutara", lat: 6.5810, lon: 79.9631 },
@@ -107,7 +107,15 @@ $_SESSION['child_name'] = $user['child_name'];
         { name: "Vidyaloka Maha Vidyalaya", type: "mixed", address: "Bombuwala, Kalutara", lat: 6.6050, lon: 79.9450 },
         { name: "Panadura Royal College", type: "boy", address: "Panadura, Kalutara District", lat: 6.7143, lon: 79.9040 },
         { name: "Sethubandhan Girls' College", type: "girl", address: "Beruwala, Kalutara District", lat: 6.4750, lon: 79.9820 }
-    ];
+    ];*/
+    let schoolArray = [];
+
+    fetch('../api/get_schools.php')
+        .then(res => res.json())
+        .then(data => {
+            schoolArray = data;
+        })
+        .catch(err => console.error("Error fetching schools:", err));
 
 
     // Haversine distance formula
