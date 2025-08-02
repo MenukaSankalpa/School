@@ -75,7 +75,7 @@ $page = $_GET['page'] ?? 'super_admin_dashboard';
     <a href="layout.php?page=super_admin_dashboard"><span class="material-icons">dashboard</span>Dashboard</a>
     <a href="layout.php?page=admin_list"><span class="material-icons">people</span>Admins</a>
     <a href="layout.php?page=applicant_list"><span class="material-icons">person</span>Applicants</a>
-    <a href="layout.php?page=school_details"><span class="material-icons">school</span>School Details</a>
+    <a href="layout.php?page=view_schools"><span class="material-icons">school</span>School Details</a>
     <a href="layout.php?page=parent_complaints"><span class="material-icons">report</span>Parent Complaints</a>
     <a href="../login.php"><span class="material-icons">logout</span>Logout</a>
 </div>
