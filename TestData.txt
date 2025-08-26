@@ -7,3 +7,6 @@ Randika Tharindu
 
 
 test data must add 
+
+admin 123
+Amal Perera 123
