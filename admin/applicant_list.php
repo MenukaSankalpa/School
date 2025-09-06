@@ -87,6 +87,21 @@ while ($row = $admins->fetch_assoc()) {
     </div>
 </div>
 
+<!-- Reject Modal -->
+<div id="rejectModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeRejectModal()">&times;</span>
+        <h2 id="rejectModalTitle">Reject Application</h2>
+        <p>Are you sure you want to reject this application?</p>
+        <form method="POST" action="process_reject.php">
+            <input type="hidden" name="app_id" id="rejectAppId">
+            <button type="submit" class="btn btn-submit-reject">Yes, Reject</button>
+            <button type="button" class="btn btn-cancel" onclick="closeRejectModal()">Cancel</button>
+        </form>
+    </div>
+</div>
+
+
 <script>
 function openModal(appId, childName) {
     document.getElementById('assignModal').style.display = 'flex';
@@ -97,6 +112,18 @@ function closeModal() {
     document.getElementById('assignModal').style.display = 'none';
 }
 </script>
+
+<script>
+function openRejectModal(appId, childName) {
+    document.getElementById('rejectModal').style.display = 'flex';
+    document.getElementById('rejectAppId').value = appId;
+    document.getElementById('rejectModalTitle').innerText = "Reject Application: " + childName;
+}
+function closeRejectModal() {
+    document.getElementById('rejectModal').style.display = 'none';
+}
+</script>
+
 
 <style>
 /* Table Styling */
@@ -160,6 +187,64 @@ function closeModal() {
 }
 .close-btn:hover { color:#000; }
 
+
+/* Modal Styling */
+.modal {
+    display: none;
+    position: fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+    justify-content:center; align-items:center;
+    z-index:1000;
+}
+.modal-content {
+    background:#fff;
+    padding:25px;
+    border-radius:12px;
+    width:400px;
+    max-width:90%;
+    position:relative;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    text-align: center;
+}
+.close-btn {
+    position:absolute;
+    top:10px; right:15px;
+    font-size:20px;
+    cursor:pointer;
+    color:#555;
+}
+.close-btn:hover { color:#000; }
+
+/* Buttons */
+.btn-submit-reject {
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: 0.3s;
+}
+.btn-submit-reject:hover { background: #b91c1c; }
+
+.btn-cancel {
+    background: #9ca3af;
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.btn-cancel:hover { background: #6b7280; }
+
+
 /* Modern Select */
 .custom-select-wrapper {
     position: relative;
@@ -205,4 +290,4 @@ function closeModal() {
     transition: 0.3s;
 }
 .btn-submit:hover { background: #1e40af; }
-</style>
+</styl>
