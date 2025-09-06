@@ -1,8 +1,8 @@
 <?php
 include '../db.php';
 
-// Fetch all admins
-$sql = "SELECT * FROM admins";
+// Fetch all admins (users with role = 2)
+$sql = "SELECT * FROM users WHERE role = 2 ORDER BY id DESC";
 $result = $conn->query($sql);
 ?>
 
@@ -147,7 +147,6 @@ $result = $conn->query($sql);
         .then(data => {
             form.reset();
 
-            
             const toast = document.getElementById('toast');
             toast.style.display = 'block';
 
