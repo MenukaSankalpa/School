@@ -48,7 +48,7 @@ body{
 }
 
 
-// registrasionForm CSS
+/*registrasionForm CSS*/
 
 #registrationForm {
     background-color: #dddfe4;
@@ -108,7 +108,7 @@ body{
 .container button{
     margin-left: 35%;
     margin-top: 5%;
-    padding: 10px 10px 10px 10px; 
+    padding: 10px 10px 10px 10px;
     background-color: #688ff3;
     color: #f5f9fa;
     outline: none;
@@ -136,7 +136,7 @@ body{
     animation-delay: calc(0.1s * var(--i));
     text-shadow: 2px 2px 4px rgb(0, 0, 0);
 }
-//school list table style css codes
+/*school list table style css codes*/
 #schoolSelectForm{
     background-color: #ca0d0d;
     border-radius: 12px;
@@ -159,7 +159,7 @@ body{
     border: 1px solid #000000;
     padding: 8px;
     text-align: left;
-} 
+}
 .school-table th {
     background-color: #ffffff;
     color: rgb(0, 0, 0);
