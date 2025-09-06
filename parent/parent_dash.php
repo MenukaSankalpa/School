@@ -40,6 +40,7 @@ $_SESSION['child_name'] = $user['child_name'];
                 <li><a href="#" id="showFormBtn">APPLY SCHOOLS</a></li>
                 <li><a href="view_applications.php">VIEW APPLICATIONS</a></li>
                 <li><a href="submit_complaint.php">SUBMIT COMPLAINT</a></li>
+                <li><a href="logout.php" class="logout-btn">LOGOUT</a></li>
             </ul>
         </nav>
     </header>
