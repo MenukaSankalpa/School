@@ -2,9 +2,9 @@
 include '../db.php';
 
 // Fetch applications
-$sql = "SELECT a.id, a.child_full_name, a.applicant_full_name, a.dob, 
-               a.resident_district, a.created_at, a.status, 
-               a.assigned_admin_id, ad.username AS assigned_admin
+$sql = "SELECT a.id, a.child_full_name, a.applicant_full_name, a.dob,
+                a.resident_district, a.created_at, a.status,
+                a.assigned_admin_id, ad.username AS assigned_admin
         FROM application_info a
         LEFT JOIN admins ad ON a.assigned_admin_id = ad.id
         ORDER BY a.created_at DESC";
@@ -290,4 +290,4 @@ function closeRejectModal() {
     transition: 0.3s;
 }
 .btn-submit:hover { background: #1e40af; }
-</styl>
+</style>
