@@ -2,15 +2,14 @@
 include '../db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get form data
     $username = trim($_POST['username']);
     $email = trim($_POST['email']);
-    $password = $_POST['password']; // plain text
+    $password = $_POST['password'];
 
-    // Hash the password securely
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    // Use MD5 to match your current database format
+    $hashedPassword = md5($password);
 
-    // Insert into users table with role = 2 (admin)
+    // Insert with role = 2 (school admin)
     $stmt = $conn->prepare("INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, 2)");
     $stmt->bind_param("sss", $username, $email, $hashedPassword);
 
