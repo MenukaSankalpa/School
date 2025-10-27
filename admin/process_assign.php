@@ -1,27 +1,22 @@
 <?php
 include '../db.php';
+session_start();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $appId = intval($_POST['app_id']);
-    $adminId = intval($_POST['admin_id']);
+if($_SERVER['REQUEST_METHOD'] === 'POST'){
+    $app_id = intval($_POST['app_id']);
+    $admin_id = intval($_POST['admin_id']);
 
-    if (!$appId || !$adminId) {
-        die("Invalid input.");
-    }
-
-    // Update application with assigned admin + mark as approved
-    $sql = "UPDATE application_info 
-            SET assigned_admin_id = ?, status = 'approved' 
-            WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ii", $adminId, $appId);
-
-    if ($stmt->execute()) {
-        header("Location: applicant_list.php?msg=Admin assigned successfully");
-        exit();
+    if($app_id && $admin_id){
+        $stmt = $conn->prepare("UPDATE application_info SET assigned_admin_id=?, status='approved' WHERE id=?");
+        $stmt->bind_param("ii", $admin_id, $app_id);
+        if($stmt->execute()){
+            $_SESSION['flash'] = "Admin assigned successfully!";
+        } else {
+            $_SESSION['flash'] = "Error: " . $conn->error;
+        }
     } else {
-        die("Error: " . $conn->error);
+        $_SESSION['flash'] = "Invalid input!";
     }
-} else {
-    die("Invalid request method.");
 }
+header("Location: applicant_list.php");
+exit;
