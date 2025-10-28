@@ -1,22 +1,8 @@
 <?php
-include '../db.php';
-
-header('Content-Type: application/json');
-
-$sql = "SELECT * FROM schools";
-$result = $conn->query($sql);
-
-$schools = [];
-
-while ($row = $result->fetch_assoc()) {
-    $schools[] = [
-        'name' => $row['name'],
-        'type' => $row['type'],
-        'address' => $row['address'],
-        'lat' => (float)$row['latitude'],
-        'lon' => (float)$row['longitude']
-    ];
-}
-
-echo json_encode($schools);
-?>
+if(!isset($_GET['address'])) { echo json_encode([]); exit; }
+$address = urlencode($_GET['address']);
+$url = "https://nominatim.openstreetmap.org/search?format=json&q=$address";
+$options = ["http"=>["header"=>"User-Agent: MySchoolApp/1.0\r\n"]];
+$context = stream_context_create($options);
+$response = file_get_contents($url,false,$context);
+echo $response;
