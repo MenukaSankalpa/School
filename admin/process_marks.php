@@ -1,16 +1,19 @@
 <?php
 include '../db.php';
-session_start();
 
-if($_SERVER['REQUEST_METHOD']==='POST'){
-    $appId = intval($_POST['app_id']);
-    $marks = intval($_POST['marks']);
-    $comments = $_POST['comments'];
+$appId = intval($_POST['app_id']);
+$marks = intval($_POST['marks']);
+$feedback = trim($_POST['feedback']);
 
-    $sql = "UPDATE application_info SET marks=?, comments=? WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("isi", $marks, $comments, $appId);
-    $stmt->execute();
-    echo "success";
+if (!$appId) {
+    echo json_encode(['success' => false, 'message' => 'Invalid ID']);
+    exit;
 }
+
+$stmt = $conn->prepare("UPDATE application_info SET marks=?, feedback=? WHERE id=?");
+$stmt->bind_param("isi", $marks, $feedback, $appId);
+$stmt->execute();
+$stmt->close();
+
+echo json_encode(['success' => true]);
 ?>
