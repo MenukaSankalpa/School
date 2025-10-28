@@ -1,302 +1,183 @@
 <?php
-include '../db.php';
 session_start();
+include '../db.php';
 
-$loggedAdminId = $_SESSION['admin_id'] ?? 0;
-$loggedAdminRole = $_SESSION['role'] ?? 0;
-$isSuperAdmin = ($loggedAdminRole == 1);
-
-if (!isset($_GET['id'])) {
-    die("Application ID missing");
+// Simple auth check
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../login.php");
+    exit;
 }
 
-$appId = intval($_GET['id']);
+$appId = intval($_GET['id'] ?? 0);
+if (!$appId) {
+    die("Invalid Applicant ID");
+}
 
-// Fetch application info
-$sql = "SELECT a.*, u.username AS assigned_admin
-        FROM application_info a
-        LEFT JOIN users u ON a.assigned_admin_id = u.id
-        WHERE a.id = ?";
-$stmt = $conn->prepare($sql);
+// Fetch applicant info
+$stmt = $conn->prepare("SELECT a.*, u.username AS applicant_name, u.email AS applicant_email
+                        FROM application_info a 
+                        LEFT JOIN users u ON a.user_id = u.id
+                        WHERE a.id=?");
 $stmt->bind_param("i", $appId);
 $stmt->execute();
-$result = $stmt->get_result();
-$app = $result->fetch_assoc();
+$app = $stmt->get_result()->fetch_assoc();
+$stmt->close();
 
 if (!$app) {
-    die("Application not found");
+    die("Applicant not found!");
 }
 
-$parentEmail = $app['applicant_email'] ?? '';
-$canMark = ($app['assigned_admin_id'] == $loggedAdminId || $isSuperAdmin);
-
-// Fetch communication logs
-$logSql = "SELECT * FROM communication_logs WHERE application_id = ? ORDER BY created_at DESC";
-$logStmt = $conn->prepare($logSql);
-$logStmt->bind_param("i", $appId);
-$logStmt->execute();
-$logResult = $logStmt->get_result();
-$logs = $logResult->fetch_all(MYSQLI_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>View Application</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<title>View Applicant</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background: #f8fafc;
+  font-family: 'Poppins', sans-serif;
+  background: #f3f4f6;
+  margin: 0;
+  padding: 0;
 }
-.layout {
-    display: flex;
-    min-height: 100vh;
+.container {
+  max-width: 700px;
+  margin: 50px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  padding: 30px;
 }
-.sidebar {
-    width: 240px;
-    background: #1e293b;
-    color: #fff;
-    padding: 20px;
+h2 {
+  text-align: center;
+  color: #1f2937;
+  margin-bottom: 25px;
 }
-.sidebar h2 {
-    font-size: 20px;
-    margin-bottom: 30px;
-    text-align: center;
+table {
+  width: 100%;
+  border-collapse: collapse;
 }
-.sidebar a {
-    display: flex;
-    align-items: center;
-    color: #e2e8f0;
-    text-decoration: none;
-    padding: 10px 12px;
-    border-radius: 8px;
-    margin-bottom: 6px;
-    transition: 0.3s;
+td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 15px;
 }
-.sidebar a:hover {
-    background: #334155;
+td:first-child {
+  font-weight: 600;
+  color: #374151;
+  width: 180px;
 }
-.sidebar .material-icons {
-    font-size: 20px;
-    margin-right: 10px;
+textarea, input, button {
+  font-family: inherit;
+  font-size: 15px;
 }
-.main {
-    flex: 1;
-    padding: 40px;
-}
-.card {
-    background: #fff;
-    border-radius: 10px;
-    padding: 30px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    margin-bottom: 30px;
-}
-h1 {
-    font-size: 26px;
-    margin-bottom: 20px;
-    color: #0f172a;
-}
-.section h2 {
-    font-size: 20px;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 12px;
-}
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-.table td {
-    padding: 10px;
-    border-bottom: 1px solid #e2e8f0;
-}
-input, textarea, button {
-    font-family: 'Poppins', sans-serif;
-}
-input, textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: 6px;
-    border: 1px solid #cbd5e1;
-    margin-bottom: 12px;
-    font-size: 15px;
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  resize: vertical;
+  margin-top: 5px;
 }
 button {
-    border: none;
-    border-radius: 6px;
-    padding: 10px 16px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 0.3s;
+  margin-top: 15px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 600;
+  transition: 0.3s;
 }
-.btn-success {
-    background: #16a34a;
-    color: #fff;
+.btn-save {
+  background: #10b981;
 }
-.btn-success:hover { background: #15803d; }
-.btn-primary {
-    background: #2563eb;
-    color: #fff;
+.btn-save:hover {
+  background: #059669;
 }
-.btn-primary:hover { background: #1e40af; }
-.toast {
-    display: none;
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: #22c55e;
-    color: #fff;
-    padding: 12px 20px;
-    border-radius: 6px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    z-index: 9999;
+.btn-message {
+  background: #2563eb;
 }
-.log-card {
-    background: #f9fafb;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    margin-bottom: 10px;
+.btn-message:hover {
+  background: #1e40af;
 }
-.log-card p {
-    margin: 4px 0;
-    font-size: 14px;
+.alert {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 500;
+  display: none;
 }
-.log-card span {
-    font-weight: 600;
-    color: #334155;
+.alert.success {
+  background: #d1fae5;
+  color: #065f46;
+}
+.alert.error {
+  background: #fee2e2;
+  color: #991b1b;
 }
 </style>
 </head>
 <body>
-<div class="layout">
+<div class="container">
+  <h2>Applicant Details</h2>
+  <table>
+    <tr><td>Applicant Name</td><td><?= htmlspecialchars($app['applicant_name']) ?></td></tr>
+    <tr><td>Email</td><td><?= htmlspecialchars($app['applicant_email']) ?></td></tr>
+    <tr><td>Child Full Name</td><td><?= htmlspecialchars($app['child_full_name']) ?></td></tr>
+    <tr><td>School Name</td><td><?= htmlspecialchars($app['school_name'] ?? '-') ?></td></tr>
+    <tr><td>Marks</td><td><?= htmlspecialchars($app['marks'] ?? '-') ?></td></tr>
+  </table>
 
-<!-- Sidebar -->
-<div class="sidebar">
-    <h2>Admin Panel</h2>
-    <a href="layout.php?page=super_admin_dashboard"><span class="material-icons">dashboard</span>Dashboard</a>
-    <a href="layout.php?page=admin_list"><span class="material-icons">people</span>Admins</a>
-    <a href="layout.php?page=applicant_list"><span class="material-icons">person</span>Applicants</a>
-    <a href="layout.php?page=view_schools"><span class="material-icons">school</span>School Details</a>
-    <a href="layout.php?page=parent_complaints"><span class="material-icons">report</span>Parent Complaints</a>
-    <a href="../login.php"><span class="material-icons">logout</span>Logout</a>
-</div>
+  <form id="feedbackForm">
+    <input type="hidden" name="app_id" value="<?= $appId ?>">
+    <label for="feedback"><strong>Feedback:</strong></label>
+    <textarea name="feedback" id="feedback" rows="4"><?= htmlspecialchars($app['feedback'] ?? '') ?></textarea>
+    <button type="submit" class="btn-save">💾 Save Feedback</button>
+    <button type="button" class="btn-message" onclick="sendMessage()">📩 Send Message to Parent</button>
+  </form>
 
-<div class="main">
-
-<div class="card">
-    <h1>Application: <?= htmlspecialchars($app['child_full_name']) ?></h1>
-
-    <div class="section">
-        <h2>Applicant Details</h2>
-        <table class="table">
-            <tr><td><strong>Child Name:</strong></td><td><?= htmlspecialchars($app['child_full_name']) ?></td></tr>
-            <tr><td><strong>DOB:</strong></td><td><?= htmlspecialchars($app['dob']) ?></td></tr>
-            <tr><td><strong>District:</strong></td><td><?= htmlspecialchars($app['resident_district']) ?></td></tr>
-            <tr><td><strong>Parent Name:</strong></td><td><?= htmlspecialchars($app['applicant_full_name']) ?></td></tr>
-            <tr><td><strong>Email:</strong></td><td><?= htmlspecialchars($parentEmail) ?></td></tr>
-            <tr><td><strong>Status:</strong></td><td><?= htmlspecialchars($app['status']) ?></td></tr>
-            <tr><td><strong>Assigned Admin:</strong></td><td><?= htmlspecialchars($app['assigned_admin'] ?? '-') ?></td></tr>
-            <tr><td><strong>Marks:</strong></td><td><?= htmlspecialchars($app['marks'] ?? '-') ?></td></tr>
-            <tr><td><strong>Comments:</strong></td><td><?= htmlspecialchars($app['feedback'] ?? '-') ?></td></tr>
-        </table>
-    </div>
-</div>
-
-<?php if($canMark): ?>
-<div class="card">
-    <div class="section">
-        <h2>Give Marks & Comments</h2>
-        <form id="marksForm">
-            <input type="hidden" name="app_id" value="<?= $appId ?>">
-            <label>Marks</label>
-            <input type="number" name="marks" min="0" max="100" required value="<?= htmlspecialchars($app['marks'] ?? '') ?>">
-            <label>Comments</label>
-            <textarea name="comments" rows="4"><?= htmlspecialchars($app['feedback'] ?? '') ?></textarea>
-            <button type="submit" class="btn-success">Save Marks</button>
-        </form>
-    </div>
-</div>
-<?php endif; ?>
-
-<div class="card">
-    <div class="section">
-        <h2>Notify Parent</h2>
-        <form id="notifyForm">
-            <input type="hidden" name="app_id" value="<?= $appId ?>">
-            <button type="button" id="sendEmail" class="btn-primary">Send Email</button>
-            <button type="button" id="sendMessage" class="btn-primary">Send Dashboard Message</button>
-        </form>
-    </div>
-</div>
-
-<div class="card">
-    <div class="section">
-        <h2>Communication History</h2>
-        <?php if(count($logs) > 0): ?>
-            <?php foreach($logs as $log): ?>
-                <div class="log-card">
-                    <p><span>Type:</span> <?= htmlspecialchars($log['type']) ?></p>
-                    <p><span>Message:</span> <?= htmlspecialchars($log['message']) ?></p>
-                    <p><span>Sent By:</span> <?= htmlspecialchars($log['sent_by']) ?></p>
-                    <p><span>Time:</span> <?= htmlspecialchars($log['created_at']) ?></p>
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>No communication records yet.</p>
-        <?php endif; ?>
-    </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-</div>
+  <div id="alertBox" class="alert"></div>
 </div>
 
 <script>
-function showToast(msg){
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.style.display = 'block';
-    setTimeout(()=> t.style.display='none', 2500);
+function showAlert(type, text) {
+  const box = document.getElementById('alertBox');
+  box.className = 'alert ' + type;
+  box.textContent = text;
+  box.style.display = 'block';
+  setTimeout(()=> box.style.display='none', 3000);
 }
 
-// Save marks/comments
-document.getElementById('marksForm')?.addEventListener('submit', function(e){
-    e.preventDefault();
-    const formData = new FormData(this);
-    fetch('process_marks.php', { method:'POST', body: formData })
-    .then(r=>r.json())
-    .then(res=>{
-        showToast(res.success ? '✅ Marks saved successfully!' : '⚠️ ' + res.message);
-    });
+// Save feedback
+document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const formData = new FormData(this);
+  fetch('update_feedback.php', {
+    method: 'POST',
+    body: formData
+  }).then(r => r.json()).then(d => {
+    if (d.status === 'success') showAlert('success', 'Feedback updated successfully!');
+    else showAlert('error', d.message);
+  });
 });
 
-// Send Email
-document.getElementById('sendEmail').addEventListener('click', function(){
-    fetch('send_email.php', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ app_id: <?= $appId ?> })
-    }).then(r=>r.json()).then(res=>{
-        showToast(res.success ? '✅ Email sent to parent!' : '⚠️ ' + res.message);
-    });
-});
-
-// Send Dashboard Message
-document.getElementById('sendMessage').addEventListener('click', function(){
-    fetch('send_message.php', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ app_id: <?= $appId ?> })
-    }).then(r=>r.json()).then(res=>{
-        showToast(res.success ? '✅ Message sent to dashboard!' : '⚠️ ' + res.message);
-    });
-});
+// Send message to parent
+function sendMessage() {
+  fetch('send_message.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ app_id: <?= $appId ?> })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.status === 'success') showAlert('success', 'Message sent to parent successfully!');
+    else showAlert('error', d.message);
+  })
+  .catch(err => showAlert('error', 'Error sending message'));
+}
 </script>
 </body>
 </html>
