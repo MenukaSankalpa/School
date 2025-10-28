@@ -4,7 +4,7 @@
     --primary-color: #688ff3;
     --primary-second-color: #f5f9fa;
     --background-color: #FFFFF7;
-    --text-color: #fffff;
+    --text-color: #000000;
 }
 *{
     padding: 0;
@@ -16,111 +16,36 @@ body{
     background: linear-gradient(90deg, var(--primary-second-color), var(--primary-color));
 }
 
+/* Header */
 .dashboard-header {
     background-color: whitesmoke;
-    padding: 10px 10px 10px 10px ;
-    margin-top: 0;
+    padding: 10px 0;
     margin-bottom: 30px;
     border-radius: 0 0 10px 10px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     text-align: center;
-    min-height: 12vh;
 }
 
 .dashboard-header ul {
     list-style: none;
-    margin: 20px;
-    padding: 0;
     display: flex;
     justify-content: center;
-    gap: 70px;
+    gap: 50px;
 }
+
 .dashboard-header a {
     color: var(--text-color);
     text-decoration: none;
     font-weight: bold;
-    font-size: 20px;
+    font-size: 18px;
     transition: color 0.3s;
-    
 }
+
 .dashboard-header a:hover {
     color: var(--primary-color);
 }
 
-
-/*registrasionForm CSS*/
-
-#registrationForm {
-    background-color: #dddfe4;
-    border-radius: 12px;
-    width: 500px;
-    height: 400px;
-    margin: 10px 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-.container{
-    background-color: #ffffff;
-    border-radius: 12px;
-    width: 450px;
-    height: 450px;
-    margin:  auto;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.container h2{
-    color: rgb(32, 36, 36);
-    margin-left: 20%;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    font-weight: 800;
-    font-size: 28px;
-}
-
-.input-group{
-    position: relative;
-    margin-bottom: 12px;
-    padding-top: 15px;
-    
-}
-.input-group i {
-    position: absolute;
-    right: 55px;
-    top: 75%;
-    transform: translateY(-50%);
-    font-size: 20px;
-    color: rgb(186, 190, 190);
-
-}
-
-.input-group input, select{
-    width: 80%;
-    margin-left: 45px;
-    margin-bottom: -10px;
-    padding: 15px 40px 15px 15px;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: 600;
-    outline: none;
-    background-color:  #eee;;
-}
-
-.container button{
-    margin-left: 35%;
-    margin-top: 5%;
-    padding: 10px 10px 10px 10px;
-    background-color: #688ff3;
-    color: #f5f9fa;
-    outline: none;
-    border: none;
-    border-radius: 5px;
-    font-weight: 600;
-}
-
-.container button:hover{
-    background-color: #1457e7;
-    color: #030303;
-}
+/* Header text */
 .header-text{
     display: flex;
     justify-content: center;
@@ -128,66 +53,139 @@ body{
     height: 80vh;
     text-align: center;
 }
+
 .header-text h1 span {
     display: inline-block;
-    font-size: 4rem;
+    font-size: 3.5rem;
     color: #000000;
-    animation: bounce 01s ease-in-out infinite;
+    animation: bounce 1s ease-in-out infinite;
     animation-delay: calc(0.1s * var(--i));
-    text-shadow: 2px 2px 4px rgb(0, 0, 0);
-}
-/*school list table style css codes*/
-#schoolSelectForm{
-    background-color: #ca0d0d;
-    border-radius: 12px;
-    width: 3000px;
-    height: 450px;
-    margin:  auto;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
 }
 
-.school-table {
-    width: 500px;
-    height: 400px;
-    border-collapse: collapse;
-    margin-top: 20px;
-    background-color: #f9f9f9;
-    font-family: Arial, sans-serif;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-.school-table th, .school-table td {
-    border: 1px solid #000000;
-    padding: 8px;
-    text-align: left;
-}
-.school-table th {
+/* Apply School Form */
+#registrationForm {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 380px;
+    max-width: 90%;
     background-color: #ffffff;
-    color: rgb(0, 0, 0);
-    font-weight: bold;
+    border-radius: 15px;
+    padding: 25px 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    z-index: 1000;
 }
-.submit-btn {
-    padding: 2px 10px;
-    background-color: #005a87;
-    color: white;
+
+#registrationForm h2{
+    text-align: center;
+    color: var(--primary-color);
+    font-size: 1.8em;
+    margin-bottom: 20px;
+}
+
+.input-group{
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.input-group input, .input-group select{
+    width: 100%;
+    padding: 12px 40px 12px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+    outline: none;
+    transition: 0.3s;
+    background-color: #f3f4f6;
+}
+
+.input-group input:focus, .input-group select:focus{
+    border-color: var(--primary-color);
+    box-shadow: 0 0 8px rgba(104,143,243,0.2);
+}
+
+.input-group i{
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+#registrationForm button{
+    width: 100%;
+    padding: 12px;
+    font-size: 1em;
+    border-radius: 8px;
     border: none;
+    background-color: var(--primary-color);
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#registrationForm button:hover{
+    background-color: #1457e7;
+}
+
+/* School Table */
+#schoolResults{
+    margin-top: 20px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.school-table{
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    font-family: Arial, sans-serif;
+    font-size: 0.95em;
+}
+
+.school-table th{
+    text-align: left;
+    padding: 10px;
+    background: var(--primary-color);
+    color: #fff;
+    border-radius: 8px 8px 0 0;
+}
+
+.school-table td{
+    padding: 10px;
+    background: #f3f4f6;
+    border-bottom: 8px solid transparent;
+    border-radius: 0 0 8px 8px;
+}
+
+.school-table td input[type="checkbox"]{
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.submit-btn{
+    width: 100%;
+    padding: 10px;
+    background-color: #2563eb;
+    color: #fff;
     border-radius: 6px;
+    border: none;
     cursor: pointer;
     font-size: 16px;
-    margin-top: 5px;
-    margin-bottom: 40px;
+    margin-top: 10px;
 }
+
 .submit-btn:disabled{
     background-color: #ccc;
     cursor: not-allowed;
 }
 
-
-
+/* Animations */
 @keyframes bounce {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-20px);
-    }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
 }
