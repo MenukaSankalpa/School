@@ -1,119 +1,144 @@
 <?php
+session_start();
 include '../db.php';
 
-// Count Pending Applications
+// Ensure logged-in user is a school admin
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != '2') {
+    header("Location: ../index.html"); // redirect to main login
+    exit;
+}
+
+$admin_id = $_SESSION['user_id']; // session user ID
+
+// Total assigned applicants
+$applicant_count = 0;
+$stmt = $conn->prepare("SELECT COUNT(*) AS total FROM application_info WHERE assigned_admin_id = ?");
+$stmt->bind_param("i", $admin_id);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result && $row = $result->fetch_assoc()) {
+    $applicant_count = $row['total'];
+}
+
+// Pending applicants
 $pending_count = 0;
-$result = $conn->query("SELECT COUNT(*) as total FROM application_info WHERE status = 'pending'");
+$stmt = $conn->prepare("SELECT COUNT(*) AS total FROM application_info WHERE status = 'pending' AND assigned_admin_id = ?");
+$stmt->bind_param("i", $admin_id);
+$stmt->execute();
+$result = $stmt->get_result();
 if ($result && $row = $result->fetch_assoc()) {
     $pending_count = $row['total'];
 }
 
-// Count Approved/Done Applications
+// Approved/done applicants
 $done_count = 0;
-$result = $conn->query("SELECT COUNT(*) as total FROM application_info WHERE status = 'approved'");
+$stmt = $conn->prepare("SELECT COUNT(*) AS total FROM application_info WHERE status = 'approved' AND assigned_admin_id = ?");
+$stmt->bind_param("i", $admin_id);
+$stmt->execute();
+$result = $stmt->get_result();
 if ($result && $row = $result->fetch_assoc()) {
     $done_count = $row['total'];
 }
+
+$stmt->close();
+$conn->close();
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
+    <title>School Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
             margin: 0;
-            background: #f3f4f6;
             display: flex;
+            background-color: #f3f4f6;
         }
-        /* Sidebar */
-        .sidebar {
-            width: 220px;
-            background: #1e40af;
-            color: white;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding-top: 20px;
-        }
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 22px;
-        }
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            padding: 15px 20px;
-            display: block;
-            transition: 0.3s;
-        }
-        .sidebar a:hover {
-            background: #2563eb;
-        }
+
         /* Main content */
         .main-content {
+            margin-left: 240px; /* width of sidebar */
+            padding: 40px;
             flex: 1;
-            padding: 30px;
         }
+
         h1 {
+            font-size: 28px;
             margin-bottom: 30px;
+            color: #1f2937;
         }
+
         .dashboard-cards {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
         }
+
         .card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-            flex: 1 1 200px;
+            flex: 1 1 250px;
+            background-color: #fff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             text-align: center;
-            transition: 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
         }
+
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
         }
+
         .card h2 {
-            margin: 0 0 15px;
             font-size: 20px;
-            color: #111827;
+            color: #1f2937;
+            margin-bottom: 15px;
         }
+
         .card p {
-            font-size: 36px;
-            font-weight: bold;
-            color: #2563eb;
+            font-size: 48px;
+            font-weight: 600;
+            color: #3b82f6;
+            margin: 0;
         }
-        .pending { color: #f59e0b; }
-        .done { color: #10b981; }
+
+        .card i {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 30px;
+            color: rgba(59,130,246,0.2);
+        }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h2>Admin Panel</h2>
-        <a href="applicant_list.php">Applicants</a>
-        <a href="assign_admin.php">Assign Admin</a>
-        <a href="logout.php">Logout</a>
-    </div>
+    <!-- Include Sidebar -->
+    <?php include 'layout.php'; ?>
 
-    <!-- Main content -->
+    <!-- Main Content -->
     <div class="main-content">
-        <h1>Applicant Dashboard</h1>
+        <h1>Dashboard</h1>
         <div class="dashboard-cards">
             <div class="card">
-                <h2>Pending Applications</h2>
-                <p class="pending"><?= $pending_count ?></p>
+                <i class="fas fa-users"></i>
+                <h2>Total Assigned Applicants</h2>
+                <p><?= $applicant_count ?></p>
             </div>
             <div class="card">
-                <h2>Approved / Done Applications</h2>
-                <p class="done"><?= $done_count ?></p>
+                <i class="fas fa-hourglass-half"></i>
+                <h2>Pending Applicants</h2>
+                <p><?= $pending_count ?></p>
+            </div>
+            <div class="card">
+                <i class="fas fa-check-circle"></i>
+                <h2>Approved / Done Applicants</h2>
+                <p><?= $done_count ?></p>
             </div>
         </div>
     </div>
