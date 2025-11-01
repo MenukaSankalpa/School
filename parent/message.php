@@ -10,13 +10,28 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
-// Fetch messages
-$stmt = $conn->prepare("SELECT * FROM messages WHERE user_id = ? ORDER BY created_at DESC");
+// Fetch the application ID based on the logged-in parent
+$stmt = $conn->prepare("SELECT id FROM application_info WHERE user_id = ?");
 $stmt->bind_param("i", $userId);
+$stmt->execute();
+$stmt->bind_result($appId);
+$stmt->fetch();
+$stmt->close();
+
+if (!$appId) {
+    echo "Application ID not found. Please login again.";
+    exit;
+}
+
+// Fetch messages for this application
+$stmt = $conn->prepare("SELECT * FROM messages WHERE applicant_id = ? ORDER BY created_at DESC");
+$stmt->bind_param("i", $appId);
 $stmt->execute();
 $result = $stmt->get_result();
 $messages = $result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
+
+$hasMessages = count($messages) > 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -93,6 +108,21 @@ h2 {
 .btn-logout:hover {
   background: #dc2626;
 }
+.status-box {
+  text-align: center;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+.status-yes {
+  background: #d1fae5;
+  color: #065f46;
+}
+.status-no {
+  background: #fee2e2;
+  color: #991b1b;
+}
 </style>
 </head>
 <body>
@@ -104,9 +134,15 @@ h2 {
 </div>
 
 <div class="container">
+  <?php if ($hasMessages): ?>
+    <div class="status-box status-yes">Message Status: ✅ Yes, admin has sent messages</div>
+  <?php else: ?>
+    <div class="status-box status-no">Message Status: ❌ No messages from admin yet</div>
+  <?php endif; ?>
+
   <h2>Messages from Admin</h2>
 
-  <?php if (count($messages) > 0): ?>
+  <?php if ($hasMessages): ?>
     <?php foreach ($messages as $msg): ?>
       <div class="message">
         <p><?= htmlspecialchars($msg['message']) ?></p>
@@ -114,7 +150,7 @@ h2 {
       </div>
     <?php endforeach; ?>
   <?php else: ?>
-    <div class="no-msg">No messages yet.</div>
+    <div class="no-msg">No messages from admin yet.</div>
   <?php endif; ?>
 </div>
 </body>
