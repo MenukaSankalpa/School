@@ -1,23 +1,8 @@
-
-
 <?php
 session_start();
 include '../db.php';
 
 $page = $_GET['page'] ?? 'super_admin_dashboard'; 
-
-// Fetch parent messages to display in admin dashboard
-$parentMessages = [];
-$messageCount = 0;
-
-$msgSql = "SELECT id, parent_id, message, created_at FROM parent_messages ORDER BY created_at DESC";
-$resMessages = $conn->query($msgSql);
-if ($resMessages) {
-    $messageCount = $resMessages->num_rows;
-    while ($row = $resMessages->fetch_assoc()) {
-        $parentMessages[] = $row;
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -39,12 +24,6 @@ if ($resMessages) {
         .sidebar a:hover { background-color: #334155; }
         .material-icons { font-size: 20px; }
         .content { margin-left: 240px; padding: 30px; width: calc(100% - 240px); }
-
-        /* Notifications */
-        .notification { background: #fff; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-        .notification h3 { font-size: 16px; margin-bottom: 8px; }
-        .notification p { font-size: 14px; color: #4b5563; }
-        .notification small { font-size: 12px; color: #9ca3af; }
     </style>
 </head>
 <body>
@@ -63,7 +42,6 @@ if ($resMessages) {
 
 <!-- Dynamic Content -->
 <div class="content">
-
     <?php
     // Include the selected page
     $file = $page . '.php';
@@ -74,21 +52,6 @@ if ($resMessages) {
         echo "<h2>Page not found.</h2>";
     }
     ?>
-
-    <!-- Parent Messages Section -->
-    <h2 style="margin-top: 30px;">Parent Messages (<?= $messageCount ?>)</h2>
-    <?php if ($messageCount > 0): ?>
-        <?php foreach ($parentMessages as $msg): ?>
-            <div class="notification">
-                <h3>From Parent ID: <?= $msg['parent_id'] ?></h3>
-                <p><?= htmlspecialchars($msg['message']) ?></p>
-                <small><?= $msg['created_at'] ?></small>
-            </div>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <p>No messages from parents.</p>
-    <?php endif; ?>
-
 </div>
 
 </body>
