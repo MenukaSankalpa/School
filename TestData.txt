@@ -11,3 +11,6 @@ test data must add
 
 admin 123
 Amal Perera 123
+
+school admin ->      sanka = 123456
+parent ->     Tim = 123
