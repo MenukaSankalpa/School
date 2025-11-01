@@ -1,32 +1,35 @@
-<!-- layout.php -->
-<!-- Add Font Awesome CDN in your main page head if not already included -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+<?php
+// Get current page filename
+$current_page = basename($_SERVER['PHP_SELF']);
+?>
 
 <div class="sidebar">
     <div class="sidebar-header">
         <h2>Admin Panel</h2>
     </div>
     <nav class="sidebar-nav">
-        <a href="school_admin_dashboard.php" class="active">
+        <a href="school_admin_dashboard.php" class="<?= ($current_page == 'school_admin_dashboard.php') ? 'active' : '' ?>">
             <i class="fas fa-tachometer-alt"></i> Dashboard
         </a>
-        <a href="applicant_list.php">
+        <a href="applicant_list.php" class="<?= ($current_page == 'applicant_list.php') ? 'active' : '' ?>">
             <i class="fas fa-user-graduate"></i> Applicants
         </a>
-        <a href="status.php">
+        <a href="status.php" class="<?= ($current_page == 'status.php') ? 'active' : '' ?>">
             <i class="fas fa-check-circle"></i> Status
         </a>
-        <a href="logout.php">
+        <a href="logout.php" class="<?= ($current_page == 'logout.php') ? 'active' : '' ?>">
             <i class="fas fa-sign-out-alt"></i> Logout
         </a>
     </nav>
 </div>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 <style>
 /* Modern Sidebar with Icons */
 .sidebar {
     width: 240px;
-    background-color: #1e3a8a; /* deep blue */
+    background-color: #1e3a8a;
     color: #fff;
     height: 100vh;
     display: flex;
@@ -70,7 +73,7 @@
 }
 
 .sidebar-nav a:hover {
-    background-color: #2563eb; /* hover blue */
+    background-color: #2563eb;
     border-left: 4px solid #fff;
 }
 
