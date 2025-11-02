@@ -10,7 +10,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != '2') {
 $adminId = $_SESSION['user_id'];
 $applicantId = $_GET['id'] ?? 0;
 
-// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['marks'])) {
     $marks = $_POST['marks'] ?? null;
     $feedback = $_POST['feedback'] ?? null;
@@ -25,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['marks'])) {
     exit;
 }
 
-// Fetch applicant details
+
 $stmt = $conn->prepare("SELECT * FROM application_info WHERE id=? AND assigned_admin_id=?");
 $stmt->bind_param("ii", $applicantId, $adminId);
 $stmt->execute();
@@ -39,6 +38,14 @@ if (!$applicant) {
 }
 
 $userId = $applicant['user_id'];
+
+function parseFileList($fileList) {
+    if (!$fileList || trim($fileList) === '') return [];
+    return array_filter(array_map('trim', explode(',', $fileList)));
+}
+
+$ebills = parseFileList($applicant['ebill_files']);
+$lbills = parseFileList($applicant['lbill_files']);
 ?>
 
 <!DOCTYPE html>
@@ -48,136 +55,55 @@ $userId = $applicant['user_id'];
 <title>Applicant Details</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-body {
-    font-family: 'Poppins', sans-serif;
-    background: #f3f4f6;
-    padding: 40px;
-}
-.card {
-    max-width: 850px;
-    margin: 0 auto;
-    background: #fff;
-    border-radius: 15px;
-    padding: 30px 40px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-h1 {
-    margin-top: 0;
-    font-size: 24px;
-    color: #1f2937;
-}
-h3 {
-    margin-top: 25px;
-    color: #111827;
-    font-size: 18px;
-}
-.image-gallery {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-top: 15px;
-}
-.image-gallery img {
-    width: 180px;
-    height: 130px;
-    object-fit: cover;
-    border-radius: 10px;
-    border: 2px solid #e5e7eb;
-    transition: transform 0.3s, box-shadow 0.3s;
-    cursor: pointer;
-}
-.image-gallery img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-}
-.no-image {
-    color: #6b7280;
-    font-style: italic;
-    font-size: 14px;
-}
-.card table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-.card table td {
-    padding: 8px 10px;
-    border-bottom: 1px solid #e5e7eb;
-    font-size: 14px;
-}
-form label {
-    font-weight: 500;
-    display: block;
-    margin-top: 15px;
-    margin-bottom: 5px;
-    color: #374151;
-}
-form input[type="number"],
-form textarea,
-form select {
-    width: 100%;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-family: inherit;
-}
-form button {
-    background: #2563eb;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 500;
-    transition: background 0.3s;
-}
-form button:hover {
-    background: #1e40af;
-}
+body { font-family: 'Poppins', sans-serif; background: #f3f4f6; padding: 40px; }
+.card { max-width: 850px; margin: 0 auto; background: #fff; border-radius: 15px; padding: 30px 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);}
+h1 { margin-top: 0; font-size: 24px; color: #1f2937;}
+h3 { margin-top: 25px; color: #111827; font-size: 18px;}
+.image-gallery, .lbill-gallery { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px; }
+.image-gallery img, .lbill-gallery img { width: 120px; height: auto; border: 1px solid #ccc; border-radius: 5px; cursor: pointer; transition: transform 0.2s;}
+.image-gallery img:hover, .lbill-gallery img:hover { transform: scale(1.05);}
+.no-image { color: #6b7280; font-style: italic; font-size: 14px; margin-top: 10px;}
+.card table { width: 100%; border-collapse: collapse; margin-top: 10px;}
+.card table td { padding: 8px 10px; border-bottom: 1px solid #e5e7eb; font-size: 14px;}
+form label { font-weight: 500; display: block; margin-top: 15px; margin-bottom: 5px; color: #374151;}
+form input[type="number"], form textarea, form select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-family: inherit;}
+form button { background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 500; transition: background 0.3s;}
+form button:hover { background: #1e40af;}
 </style>
 </head>
 <body>
 
 <div class="card">
-    <h1><?= htmlspecialchars($applicant['child_full_name']) ?> 
-        <small>(<?= htmlspecialchars($applicant['dob']) ?>)</small>
-    </h1>
+    <h1><?= htmlspecialchars($applicant['child_full_name']) ?> <small>(<?= htmlspecialchars($applicant['dob']) ?>)</small></h1>
 
-    <h3>Uploaded Electricity Bills</h3>
+    <h3>Uploaded E-Bill Files</h3>
     <div class="image-gallery">
-        <?php
-        $ebillPath = "../uploads/ebills/$userId/";
-        $lbillPath = "../uploads/lbills/$userId/";
-        $hasImage = false;
-
-        function showFolderImages($folder) {
-            global $hasImage;
-            if (is_dir($folder)) {
-                $files = glob($folder . "*.{jpg,jpeg,png,gif,webp}", GLOB_BRACE);
-                foreach ($files as $file) {
-                    $fileUrl = $file;
-                    echo '<a href="' . $fileUrl . '" target="_blank">
-                            <img src="' . $fileUrl . '" alt="Uploaded Bill">
-                          </a>';
-                    $hasImage = true;
-                }
-            }
-        }
-
-        showFolderImages($ebillPath);
-
-        if (!$hasImage) echo '<p class="no-image">No electricity bills uploaded.</p>';
-        ?>
+        <?php if (!empty($ebills)): ?>
+            <?php foreach ($ebills as $file):
+                $file = trim($file);
+                if (!file_exists("../$file")) continue;
+            ?>
+                <a href="../<?= htmlspecialchars($file) ?>" target="_blank"><img src="../<?= htmlspecialchars($file) ?>" alt="E-Bill"></a>
+            <?php endforeach; ?>
+            <?php if (empty($ebills)) echo '<p class="no-image">No E-Bill files uploaded.</p>'; ?>
+        <?php else: ?>
+            <p class="no-image">No E-Bill files uploaded.</p>
+        <?php endif; ?>
     </div>
 
-    <h3>Uploaded Location Bills</h3>
-    <div class="image-gallery">
-        <?php
-        $hasImage = false;
-        showFolderImages($lbillPath);
-        if (!$hasImage) echo '<p class="no-image">No location bills uploaded.</p>';
-        ?>
+    <h3>Uploaded L-Bill Files</h3>
+    <div class="lbill-gallery">
+        <?php if (!empty($lbills)): ?>
+            <?php foreach ($lbills as $file):
+                $file = trim($file);
+                if (!file_exists("../$file")) continue;
+            ?>
+                <a href="../<?= htmlspecialchars($file) ?>" target="_blank"><img src="../<?= htmlspecialchars($file) ?>" alt="L-Bill"></a>
+            <?php endforeach; ?>
+            <?php if (empty($lbills)) echo '<p class="no-image">No L-Bill files uploaded.</p>'; ?>
+        <?php else: ?>
+            <p class="no-image">No L-Bill files uploaded.</p>
+        <?php endif; ?>
     </div>
 
     <h3>Applicant Details</h3>
@@ -185,8 +111,8 @@ form button:hover {
         <?php
         foreach ($applicant as $key => $value) {
             if (in_array($key, ['id','assigned_admin_id','ebill_files','lbill_files','marks','feedback','status','created_at'])) continue;
-            echo '<tr><td style="width:30%; font-weight:500;">' . ucwords(str_replace('_', ' ', $key)) . '</td>
-                      <td>' . htmlspecialchars($value) . '</td></tr>';
+            echo '<tr><td style="width:30%; font-weight:500;">'.ucwords(str_replace('_',' ',$key)).'</td>
+                      <td>'.htmlspecialchars($value).'</td></tr>';
         }
         ?>
     </table>
