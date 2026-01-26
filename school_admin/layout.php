@@ -1,5 +1,4 @@
 <?php
-// Get current page filename
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
@@ -26,7 +25,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <style>
-/* Modern Sidebar with Icons */
 .sidebar {
     width: 240px;
     background-color: #1e3a8a;

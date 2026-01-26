@@ -2,7 +2,6 @@
 session_start();
 include '../db.php';
 
-// Only logged-in parent
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../login.php");
     exit;
@@ -10,7 +9,6 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
-// Fetch the application ID based on the logged-in parent
 $stmt = $conn->prepare("SELECT id FROM application_info WHERE user_id = ?");
 $stmt->bind_param("i", $userId);
 $stmt->execute();
@@ -23,7 +21,6 @@ if (!$appId) {
     exit;
 }
 
-// Fetch messages for this application
 $stmt = $conn->prepare("SELECT * FROM messages WHERE applicant_id = ? ORDER BY created_at DESC");
 $stmt->bind_param("i", $appId);
 $stmt->execute();

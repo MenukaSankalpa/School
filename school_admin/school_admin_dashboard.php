@@ -2,13 +2,12 @@
 session_start();
 include '../db.php';
 
-// Ensure logged-in user is a school admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] != '2') {
-    header("Location: ../index.html"); // redirect to main login
+    header("Location: ../index.html");
     exit;
 }
 
-$admin_id = $_SESSION['user_id']; // session user ID
+$admin_id = $_SESSION['user_id']; 
 
 // Total assigned applicants
 $applicant_count = 0;
@@ -59,9 +58,8 @@ $conn->close();
             background-color: #f3f4f6;
         }
 
-        /* Main content */
         .main-content {
-            margin-left: 240px; /* width of sidebar */
+            margin-left: 240px;
             padding: 40px;
             flex: 1;
         }
@@ -118,10 +116,8 @@ $conn->close();
 </head>
 <body>
 
-    <!-- Include Sidebar -->
     <?php include 'layout.php'; ?>
 
-    <!-- Main Content -->
     <div class="main-content">
         <h1>Dashboard</h1>
         <div class="dashboard-cards">

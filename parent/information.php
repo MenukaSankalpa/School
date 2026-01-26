@@ -16,7 +16,7 @@ if(!isset($_SESSION['user_id'])){
 <body>
   <form action="save_information.php" method="POST" enctype="multipart/form-data">
   <div class="form-container">
-    <!--Child information fill section-->
+
     <h2>Child Information</h2>
     <div class="field-group">
       <input type="text" name="child_full_name" placeholder="Name in full" required>
@@ -34,7 +34,6 @@ if(!isset($_SESSION['user_id'])){
       <input type="number" name="age" placeholder="Age" >
     </div>
 
-    <!--Applicant information fill section-->
     <h2>Applicant Information</h2>
     <div class="field-group">
       <input type="text" name="applicant_full_name" placeholder="Name in full" required>
@@ -58,7 +57,6 @@ if(!isset($_SESSION['user_id'])){
       <input type="text" name="resident_district" placeholder="Resident District">
     </div>
 
-    <!--spouse information fill section-->
     <h2>Spouse Information</h2>
     <div class="field-group">
       <input type="text" name="spouse_full_name" placeholder="Name in full" >

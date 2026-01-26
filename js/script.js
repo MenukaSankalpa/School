@@ -24,6 +24,5 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Trigger change on load to handle default selection
     roleSelect.dispatchEvent(new Event('change'));
 });

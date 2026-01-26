@@ -16,7 +16,7 @@ body{
     background: linear-gradient(90deg, var(--primary-second-color), var(--primary-color));
 }
 
-/* Header */
+
 .dashboard-header {
     background-color: whitesmoke;
     padding: 10px 0;
@@ -45,7 +45,6 @@ body{
     color: var(--primary-color);
 }
 
-/* Header text */
 .header-text{
     display: flex;
     justify-content: center;
@@ -63,7 +62,6 @@ body{
     text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
 }
 
-/* Apply School Form */
 #registrationForm {
     position: fixed;
     top: 50%;
@@ -184,7 +182,6 @@ body{
     cursor: not-allowed;
 }
 
-/* Animations */
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-20px); }

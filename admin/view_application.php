@@ -1,26 +1,20 @@
 <?php
 session_start();
-// Assuming '../db.php' contains your database connection logic ($conn)
 include '../db.php'; 
 
-// --- Database Message Sending Handler ---
 if (isset($_POST['send_message_db'])) {
     $application_id = $_POST['application_id'];
-    // The message is retrieved from the PHP form's POST data
     $message = $_POST['message_db']; 
     $sender = 'admin';
-    $receiver = 'parent'; // or applicant
-    $subject = ''; // Subject is empty as in original code
+    $receiver = 'parent'; 
+    $subject = '';
 
     if (!empty($message)) {
-        // Use the application_id (which is the applicant_id in messages table)
         $stmt = $conn->prepare("INSERT INTO messages (applicant_id, sender, receiver, subject, message) VALUES (?, ?, ?, ?, ?)");
-        // "issss" for integer, string, string, string, string
         $stmt->bind_param("issss", $application_id, $sender, $receiver, $subject, $message);
         $stmt->execute();
         
         if ($stmt->affected_rows > 0) {
-            // Set success message for the toast notification
             $success = "✅ Message saved to DB successfully!";
         } else {
             $error = "❌ Failed to save message to DB.";
@@ -30,9 +24,7 @@ if (isset($_POST['send_message_db'])) {
         $error = "⚠️ Message cannot be empty.";
     }
 }
-// ----------------------------------------
 
-// --- Fetch applications + applicant email ---
 $applications = $conn->query("
     SELECT a.*, u.email 
     FROM application_info a
@@ -48,12 +40,11 @@ $applications = $conn->query("
 <title>Applications Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
-    // **REPLACE "YOUR_EMAILJS_USER_ID" with your actual EmailJS Public Key**
-    emailjs.init("6asBvFmjIxXAvCHCY"); // Use the ID from your original code
+    emailjs.init("6asBvFmjIxXAvCHCY");
 </script>
 
 <style>
-/* --- STYLES (Kept as provided) --- */
+
 :root {
     --blue: #3b82f6;
     --blue-dark: #2563eb;
@@ -96,7 +87,6 @@ button {
 }
 button:hover { transform: translateY(-2px); background: linear-gradient(90deg, var(--blue-dark), #1e40af); box-shadow: 0 6px 14px rgba(30,64,175,0.3); }
 
-/* Toast */
 .toast { position: fixed; bottom: 25px; right: 25px; background: rgba(255,255,255,0.95); border-radius: 10px;
     padding: 14px 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); font-size: 15px; font-weight: 500; color: #1e293b;
     opacity: 0; transform: translateY(20px); transition: all 0.4s ease; border-left: 5px solid; z-index: 1000; }
@@ -164,7 +154,7 @@ button:hover { transform: translateY(-2px); background: linear-gradient(90deg, v
 </table>
 
 <script>
-// Auto-hide toast
+
 const toast = document.querySelector('.toast');
 if (toast) {
     setTimeout(() => {
@@ -173,16 +163,11 @@ if (toast) {
     }, 3000);
 }
 
-// EmailJS send
 document.querySelectorAll('.send-email-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const formId = btn.getAttribute('data-form-id');
         const form = document.getElementById('message-form-' + formId);
-        
-        // **IMPORTANT:** Get the message content from the DB textarea name for consistency
         const message = form.querySelector('textarea[name="message_db"]').value; 
-        
-        // Get other values from hidden fields
         const recipientEmail = form.querySelector('input[name="recipient_email"]').value;
         const applicantName = form.querySelector('input[name="applicant_name"]').value;
         const childName = form.querySelector('input[name="child_name"]').value;
@@ -190,17 +175,15 @@ document.querySelectorAll('.send-email-btn').forEach(btn => {
         const feedback = form.querySelector('input[name="feedback"]').value;
 
         if (!message) { alert("⚠️ Message cannot be empty."); return; }
-        if (!recipientEmail) { alert("⚠️ Recipient email is missing."); return; } // Safety check
+        if (!recipientEmail) { alert("⚠️ Recipient email is missing."); return; }
 
-        // Send the email using EmailJS
-        // NOTE: Make sure "service_j4maamw" and "template_81bw8t5" are correct
         emailjs.send("service_j4maamw", "template_81bw8t5", {
-            to_email: recipientEmail, // The recipient's email is correctly set to the applicant's email
+            to_email: recipientEmail,
             applicant_name: applicantName,
             child_name: childName,
             marks: marks,
             feedback: feedback,
-            message: message // The message content
+            message: message
         })
         .then(() => alert("✅ Email sent successfully!"))
         .catch(err => alert("❌ Failed to send email: " + err.text));

@@ -3,10 +3,10 @@ include 'db.php';
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $userInput = trim($_POST['email']); // can be username or email
+    $userInput = trim($_POST['email']); 
     $inputPassword = $_POST['password'];
 
-    // Fetch the user by username OR email
+    
     $sql = "SELECT * FROM users WHERE email = ? OR username = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ss", $userInput, $userInput);
@@ -19,26 +19,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $isValid = false;
 
-        // ✅ Check password type
+        
         if (strlen($dbPassword) === 32 && ctype_xdigit($dbPassword)) {
-            // Old MD5 password
+            
             if (md5($inputPassword) === $dbPassword) {
                 $isValid = true;
             }
         } elseif (str_starts_with($dbPassword, '$2y$')) {
-            // New bcrypt hashed password
+            
             if (password_verify($inputPassword, $dbPassword)) {
                 $isValid = true;
             }
         }
 
         if ($isValid) {
-            // Set session
+            
             $_SESSION['email'] = $user['email'];
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['role'] = $user['role'];
 
-            // Redirect by role
+            
             switch ($user['role']) {
                 case '1':
                     header("Location: parent/parent_dash.php");

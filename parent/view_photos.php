@@ -16,7 +16,7 @@ if (!isset($_GET['id'])) {
 
 $app_id = intval($_GET['id']);
 
-// Fetch file paths from database
+
 $sql = "SELECT ebill_files, lbill_files FROM application_info WHERE id = ? AND user_id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ii", $app_id, $user_id);
@@ -39,11 +39,9 @@ $row = $result->fetch_assoc();
 // exit;
 
 function parseFileList($fileList) {
-    // Handle null or empty strings gracefully
     if (!$fileList || trim($fileList) === '') {
         return [];
     }
-    // Explode by comma, trim spaces, filter out empties
     return array_filter(array_map('trim', explode(',', $fileList)));
 }
 
@@ -143,7 +141,6 @@ $lbills = parseFileList($row['lbill_files']);
             <tbody>
             <?php foreach ($ebills as $file): ?>
                 <?php
-                // Sanitize path, ensure it starts with "uploads/ebill/" to avoid broken paths
                 $file = trim($file);
                 if (!$file || !str_starts_with($file, 'uploads/ebill/')) {
                     continue;
@@ -173,7 +170,7 @@ $lbills = parseFileList($row['lbill_files']);
                 if (!$file || !str_starts_with($file, 'uploads/lbill/')) {
                     continue;
                 }
-                if ($count++ >= 5) break; // show max 5 images
+                if ($count++ >= 5) break;
             ?>
                 <a href="../<?= htmlspecialchars($file) ?>" target="_blank" rel="noopener noreferrer">
                     <img src="../<?= htmlspecialchars($file) ?>" alt="Lbill Image">

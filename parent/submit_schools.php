@@ -16,8 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_schools'])) 
     }
 
     $user_id = $_SESSION['user_id'];
-
-    // Optional: save comma-separated list to `users` table
     $schoolList = implode(", ", $selectedSchools);
     $updateSql = "UPDATE users SET selected_schools=? WHERE id=?";
     $updateStmt = $conn->prepare($updateSql);
@@ -30,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_schools'])) 
         exit();
     }
 
-    // Delete old selections (if any)
     $deleteSql = "DELETE FROM applications WHERE user_id=?";
     $deleteStmt = $conn->prepare($deleteSql);
     if ($deleteStmt) {
@@ -39,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_schools'])) 
         $deleteStmt->close();
     }
 
-    // Insert each selected school into applications table
     $insertStmt = $conn->prepare("INSERT INTO applications (user_id, school_name) VALUES (?, ?)");
     if (!$insertStmt) {
         echo "Insert error: " . $conn->error;
@@ -52,10 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_schools'])) 
     }
     $insertStmt->close();
 
-    // Save selected schools to session (if needed later)
     $_SESSION['selected_schools'] = $selectedSchools;
 
-    // Redirect to next step
     header("Location: ../parent/information.php");
     exit();
 } else {

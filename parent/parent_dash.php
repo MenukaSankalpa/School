@@ -53,7 +53,6 @@ $_SESSION['child_name'] = $user['child_name'];
     </h1>
 </div>
 
-<!-- Apply School Form -->
 <div class="container" id="registrationForm" style="display:none;">
     <h2>Apply For Schools</h2>
     <form id="applyForm" method="POST">
@@ -87,13 +86,21 @@ $_SESSION['child_name'] = $user['child_name'];
     </form>
 </div>
 
-<!-- School Results -->
 <div id="schoolResults" style="display:none;"></div>
 
 <script>
-// School array
+
 const schoolArray = [
-    { name: "Kalutara Boys' School", type: "boy", lat: 6.5836, lon: 79.9602 },
+    // { name: "Kalutara Boys' School", type: "boy", lat: 6.5836, lon: 79.9602 },
+    // { name: "Kalutara Balika Vidyalaya", type: "girl", lat: 6.5823, lon: 79.9609 },
+    // { name: "Holy Cross College", type: "mixed", lat: 6.5810, lon: 79.9631 },
+    // { name: "Tissa Central College", type: "mixed", lat: 6.5861, lon: 79.9605 },
+    // { name: "St. John's College", type: "boy", lat: 6.5887, lon: 79.9600 },
+    // { name: "Kalutara Muslim Girls School", type: "girl", lat: 6.5820, lon: 79.9620 },
+    // { name: "Al-Hambra Maha Vidyalaya", type: "mixed", lat: 6.5782, lon: 79.9635 },
+    // { name: "St. Thomas' Boys School", type: "boy", lat: 6.6345, lon: 79.9281 },
+    // { name: "Sagara Balika Vidyalaya", type: "girl", lat: 6.5334, lon: 79.9622 },
+    // { name: "Kalutara Boys' School", type: "boy", lat: 6.5836, lon: 79.9602 },
     { name: "Kalutara Balika Vidyalaya", type: "girl", lat: 6.5823, lon: 79.9609 },
     { name: "Holy Cross College", type: "mixed", lat: 6.5810, lon: 79.9631 },
     { name: "Tissa Central College", type: "mixed", lat: 6.5861, lon: 79.9605 },
@@ -102,10 +109,15 @@ const schoolArray = [
     { name: "Al-Hambra Maha Vidyalaya", type: "mixed", lat: 6.5782, lon: 79.9635 },
     { name: "St. Thomas' Boys School", type: "boy", lat: 6.6345, lon: 79.9281 },
     { name: "Sagara Balika Vidyalaya", type: "girl", lat: 6.5334, lon: 79.9622 },
-    { name: "Royal Central College", type: "mixed", lat: 6.5801, lon: 79.9520 }
+    { name: "Royal Central College", type: "mixed", lat: 6.5801, lon: 79.9520 },
+    { name: "Vijaya National School", type: "mixed", lat: 6.5588, lon: 79.9780 },
+    { name: "St. Mary's Girls' School", type: "girl", lat: 6.5900, lon: 79.9580 },
+    { name: "Vidyaloka Maha Vidyalaya", type: "mixed", lat: 6.6050, lon: 79.9450 },
+    { name: "Panadura Royal College", type: "boy", lat: 6.7143, lon: 79.9040 },
+    { name: "Sethubandhan Girls' College", type: "girl", lat: 6.4750, lon: 79.9820 }
 ];
 
-// Toggle form
+
 document.getElementById('showFormBtn').addEventListener('click', function(e){
     e.preventDefault();
     const form = document.getElementById('registrationForm');
@@ -115,7 +127,7 @@ document.getElementById('showFormBtn').addEventListener('click', function(e){
     header.style.display = isVisible ? 'flex' : 'none';
 });
 
-// Haversine formula
+
 function getDistance(lat1, lon1, lat2, lon2){
     const R = 6371;
     const dLat = (lat2-lat1) * Math.PI/180;
@@ -125,7 +137,6 @@ function getDistance(lat1, lon1, lat2, lon2){
     return R * c;
 }
 
-// Find nearby schools
 document.getElementById('findSchoolsBtn').addEventListener('click', async function(e){
     e.preventDefault();
 
@@ -137,7 +148,7 @@ document.getElementById('findSchoolsBtn').addEventListener('click', async functi
     if(!address || !gender){ alert("Enter address and gender"); return; }
 
     try{
-        // Proxy request
+        
         const res = await fetch(`../api/get_location.php?address=${encodeURIComponent(address)}`);
         const geoData = await res.json();
         if(!geoData || geoData.length===0){ alert("Address not found"); return; }
@@ -162,7 +173,7 @@ document.getElementById('findSchoolsBtn').addEventListener('click', async functi
             return;
         }
 
-        // Build modern table
+        
         let html = `<form id="schoolSelectForm" method="POST" action="../parent/submit_schools.php">
             <table class="school-table">
             <thead>

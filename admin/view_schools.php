@@ -5,7 +5,6 @@ if (session_status() == PHP_SESSION_NONE) {
 
 include '../db.php';
 
-// Handle form submission via POST in this same file
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'add_school') {
     $name = trim($_POST['name']);
     $type = $_POST['type'];
@@ -26,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     }
 }
 
-// Fetch schools for the table
+
 $sql = "SELECT * FROM schools ORDER BY name ASC";
 $result = $conn->query($sql);
 ?>
@@ -37,7 +36,7 @@ $result = $conn->query($sql);
     <meta charset="UTF-8" />
     <title>Admin - View & Add Schools</title>
     <style>
-        /* Button */
+        
         .btn-add-new {
             display: inline-block;
             background-color: #007bff;
@@ -58,7 +57,6 @@ $result = $conn->query($sql);
             box-shadow: 0 5px 12px rgba(0, 86, 179, 0.5);
         }
 
-        /* Form styles */
         form {
             background: #fff;
             padding: 20px;
@@ -97,7 +95,6 @@ $result = $conn->query($sql);
             background-color: #565e64;
         }
 
-        /* Modern table styles */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -142,7 +139,6 @@ $result = $conn->query($sql);
             color: #0056b3;
         }
 
-        /* Responsive for small screens */
         @media (max-width: 700px) {
             table, thead, tbody, th, td, tr {
                 display: block;
@@ -181,13 +177,9 @@ $result = $conn->query($sql);
                 border-bottom: 0;
             }
         }
-
-        /* Hide sections */
         .hidden {
             display: none;
         }
-
-        /* Messages */
         .message {
             padding: 15px;
             max-width: 500px;
@@ -212,7 +204,6 @@ $result = $conn->query($sql);
 
     <h1>Schools Admin Panel</h1>
 
-    <!-- Success / Error messages -->
     <?php if (!empty($error_message)): ?>
         <div class="message error"><?= htmlspecialchars($error_message) ?></div>
     <?php endif; ?>
@@ -220,10 +211,8 @@ $result = $conn->query($sql);
         <div class="message success"><?= htmlspecialchars($success_message) ?></div>
     <?php endif; ?>
 
-    <!-- Add New School Button -->
     <button id="showAddFormBtn" class="btn-add-new">+ Add New School</button>
 
-    <!-- Add School Form (hidden by default) -->
     <form id="addSchoolForm" class="hidden" method="POST" novalidate>
         <input type="hidden" name="action" value="add_school">
         <input type="text" name="name" placeholder="School Name" required>
@@ -241,7 +230,6 @@ $result = $conn->query($sql);
         <button type="button" id="cancelAddForm" class="cancel-btn">Cancel</button>
     </form>
 
-    <!-- Schools Table -->
     <table id="schoolsTable">
         <thead>
             <tr>
@@ -282,14 +270,12 @@ $result = $conn->query($sql);
     const schoolsTable = document.getElementById('schoolsTable');
     const cancelAddFormBtn = document.getElementById('cancelAddForm');
 
-    // Show form & hide table
     showAddFormBtn.addEventListener('click', () => {
         addSchoolForm.classList.remove('hidden');
         schoolsTable.classList.add('hidden');
         showAddFormBtn.classList.add('hidden');
     });
 
-    // Cancel button: hide form, show table & button
     cancelAddFormBtn.addEventListener('click', () => {
         addSchoolForm.classList.add('hidden');
         schoolsTable.classList.remove('hidden');

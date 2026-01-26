@@ -1,19 +1,17 @@
 <?php
 include '../db.php';
 
-// Fetch all admins (users with role = 2)
 $sql = "SELECT * FROM users WHERE role = 2 ORDER BY id DESC";
 $result = $conn->query($sql);
 ?>
 
-<!-- Google Fonts & Icons -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 
 <div id="admin-panel" style="font-family: 'Poppins', sans-serif; max-width: 1000px; margin: 40px auto; padding: 20px;">
     <h1 style="font-size: 26px; font-weight: 700; margin-bottom: 30px;">Manage Admins</h1>
 
-    <!-- Toast Notification -->
+    
     <div id="toast" style="
         display: none;
         position: fixed;
@@ -30,7 +28,7 @@ $result = $conn->query($sql);
         ✅ Admin created successfully!
     </div>
 
-    <!-- Add Admin Form -->
+    
     <div style="background: #fff; padding: 24px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 40px;">
         <h2 style="font-size: 20px; margin-bottom: 16px;">Add New Admin</h2>
         <form id="createAdminForm" autocomplete="off" style="display: flex; flex-wrap: wrap; gap: 16px;">
@@ -47,7 +45,7 @@ $result = $conn->query($sql);
         </form>
     </div>
 
-    <!-- Admin Table -->
+    
     <?php if ($result && $result->num_rows > 0): ?>
         <table style="width: 100%; border-collapse: separate; border-spacing: 0 12px; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
             <thead>
@@ -84,16 +82,16 @@ $result = $conn->query($sql);
                                 <input type="hidden" name="id" value="<?= $admin['id'] ?>" />
                                 <button type="submit" title="Edit"
                                     style="display: inline-flex; align-items: center; justify-content: center; 
-                                           padding: 8px 14px; border-radius: 6px; border: 2px solid #2ecc71; 
-                                           color: #2ecc71; font-weight: 600; font-size: 14px; 
-                                           background: transparent; cursor: pointer; transition: all 0.3s ease; width: 100%; box-sizing: border-box;">
+                                            padding: 8px 14px; border-radius: 6px; border: 2px solid #2ecc71; 
+                                            color: #2ecc71; font-weight: 600; font-size: 14px; 
+                                            background: transparent; cursor: pointer; transition: all 0.3s ease; width: 100%; box-sizing: border-box;">
                                     <span class="material-icons" style="font-size: 18px; margin-right: 8px;">edit</span> Edit
                                 </button>
                                 <a href="delete_admin.php?id=<?= $admin['id'] ?>" title="Delete" onclick="return confirm('Delete this admin?');"
                                     style="display: inline-flex; align-items: center; justify-content: center; 
-                                           padding: 8px 14px; border-radius: 6px; border: 2px solid #ef4444; 
-                                           color: #ef4444; font-weight: 600; font-size: 14px; 
-                                           text-decoration: none; transition: all 0.3s ease; width: 100%; box-sizing: border-box;">
+                                            padding: 8px 14px; border-radius: 6px; border: 2px solid #ef4444; 
+                                            color: #ef4444; font-weight: 600; font-size: 14px; 
+                                            text-decoration: none; transition: all 0.3s ease; width: 100%; box-sizing: border-box;">
                                     <span class="material-icons" style="font-size: 18px; margin-right: 8px;">delete</span> Delete
                                 </a>
                             </div>
@@ -108,7 +106,7 @@ $result = $conn->query($sql);
     <?php endif; ?>
 </div>
 
-<!-- Hover Effects -->
+
 <style>
     button[title="Edit"]:hover {
         background-color: #2ecc71;
@@ -131,7 +129,7 @@ $result = $conn->query($sql);
     }
 </style>
 
-<!-- JavaScript for AJAX Create & Toast -->
+
 <script>
     document.getElementById('createAdminForm').addEventListener('submit', function(e) {
         e.preventDefault();

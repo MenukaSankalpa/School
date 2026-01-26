@@ -152,10 +152,7 @@ select{
     outline: none;
     border: none;
 }
-/*.social-icon a:hover{
-    background: black;
-    color: white;
-}*/
+
 .toggle-box{
     position: absolute;
     width: 100%;

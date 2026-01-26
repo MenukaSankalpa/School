@@ -13,17 +13,14 @@ $child_name = $_POST['child_name'];
 $role = $_POST['role'];
 $password = md5($_POST['password']);
 
-// check anyone trying to register as super admin 
 
 if ($role == '3') {
     echo "<script>alert('Super Admin already exists. You can't register as Super Admin.'); window.location.href='index.html';</script>";
     exit();
 }
 
-// child's name only if role is parent registration
 $child_name = ($role == '1') ? $_POST['child_name'] : 'N/A';
 
-// insert new user details
 
 $sql = "INSERT INTO users (username, email, child_name, role, password) VALUES (?, ?, ?, ?, ?)";
 $stmt = $conn->prepare($sql);

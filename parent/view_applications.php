@@ -9,7 +9,6 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Prepare SQL query
 $sql = "SELECT ai.*, u.selected_schools 
         FROM application_info ai
         LEFT JOIN users u ON ai.user_id = u.id
@@ -27,7 +26,6 @@ if (!$stmt->execute()) {
     die("SQL execute failed: " . $stmt->error);
 }
 
-// Check if get_result() is supported
 if (method_exists($stmt, 'get_result')) {
     $result = $stmt->get_result();
 } else {
@@ -71,7 +69,6 @@ if (method_exists($stmt, 'get_result')) {
                     <tr>
                         <td>
                             <span class="status pending">Pending</span>
-                            <!-- Later, replace with dynamic status -->
                         </td>
                         <td>
                             <?= htmlspecialchars($row['child_full_name']) ?><br>

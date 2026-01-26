@@ -2,7 +2,6 @@
 session_start();
 include '../db.php';
 
-// Only for school admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] != '2') {
     header("Location: ../index.html");
     exit;
@@ -10,7 +9,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != '2') {
 
 $adminId = $_SESSION['user_id'];
 
-// Fetch applicants assigned to this admin
 $sql = "SELECT ai.id, ai.child_full_name, ai.status, ai.marks, ai.feedback, ai.user_id
         FROM application_info ai
         WHERE ai.assigned_admin_id = ?";
@@ -177,7 +175,6 @@ function saveFeedback(id){
     <div class="cards-container">
         <?php while($row = $result->fetch_assoc()): ?>
             <?php
-            // Fetch applied schools
             $stmt2 = $conn->prepare("SELECT school_name FROM applications WHERE user_id = ?");
             $stmt2->bind_param("i", $row['user_id']);
             $stmt2->execute();
